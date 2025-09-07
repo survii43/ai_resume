@@ -20,7 +20,114 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: #ffffff;
+  color: #171717;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Ensure all text is visible */
+* {
+  color: inherit;
+}
+
+/* Override any potential dark mode issues */
+.dark * {
+  color: #171717 !important;
+}
+
+/* Ensure form elements have proper text color */
+input, textarea, select {
+  color: #171717 !important;
+}
+
+/* Ensure buttons have proper text color */
+button {
+  color: inherit;
+}
+
+/* Force text visibility for all components */
+.text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600, .text-gray-500 {
+  color: #171717 !important;
+}
+
+/* Ensure all text in cards is visible */
+.card, .Card, [class*="card"] {
+  color: #171717 !important;
+}
+
+/* Ensure all text in forms is visible */
+form, .form, [class*="form"] {
+  color: #171717 !important;
+}
+
+/* Ensure all text in buttons is visible */
+button, .button, [class*="button"] {
+  color: inherit !important;
+}
+
+/* Override any Tailwind text color classes that might be too light */
+.text-gray-400 {
+  color: #6b7280 !important;
+}
+
+.text-gray-500 {
+  color: #6b7280 !important;
+}
+
+/* Custom scrollbar styles */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced focus styles */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Improved selection styles */
+::selection {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* Loading animation keyframes */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
 }
