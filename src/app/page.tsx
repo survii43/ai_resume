@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { AdPlacement } from '@/components/AdPlacement'
+import { InteractiveAIFeatures } from '@/components/InteractiveAIFeatures'
+import { FreeAIServices } from '@/components/FreeAIServices'
+import { AIDemo } from '@/components/AIDemo'
 import { 
   Sparkles, 
   FileText, 
@@ -309,6 +312,54 @@ export default function HomePage() {
         />
       </div>
 
+      {/* Interactive AI Features Section */}
+      <section className="py-20 bg-gradient-to-br from-purple-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full mb-4">
+              <Brain className="w-4 h-4 mr-1" />
+              Interactive AI Experience
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Experience AI-Powered Resume Building
+            </h2>
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+              Try our interactive AI features and see how we can transform your resume with cutting-edge technology
+            </p>
+          </div>
+
+          <InteractiveAIFeatures />
+        </div>
+      </section>
+
+      {/* Free AI Services Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full mb-4">
+              <Sparkles className="w-4 h-4 mr-1" />
+              Free AI Services
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Experience AI Without Limits
+            </h2>
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+              Try our free AI services powered by Hugging Face, OpenAI Playground, and other free AI platforms. 
+              No credit card required, no limits on usage.
+            </p>
+          </div>
+
+          <FreeAIServices />
+        </div>
+      </section>
+
+      {/* AI Demo Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <AIDemo />
+        </div>
+      </section>
+
       {/* Enhanced CTA Section */}
       <section className="relative py-20 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 overflow-hidden">
         {/* Background Elements */}
@@ -459,16 +510,24 @@ export default function HomePage() {
                 <h3 className="text-lg font-semibold mb-2">Stay Updated</h3>
                 <p className="text-gray-400">Get the latest resume tips and AI features delivered to your inbox.</p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <input 
-                  type="email" 
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                />
-                <Button className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap">
-                  Subscribe
-                </Button>
-              </div>
+                <form className="flex flex-col sm:flex-row gap-2" onSubmit={(e) => {
+                  e.preventDefault();
+                  const email = (e.target as HTMLFormElement).email.value;
+                  if (email) {
+                    window.open(`mailto:sourav.offic@gmail.com?subject=Newsletter Subscription&body=Please subscribe me to the ResumeAI newsletter. Email: ${email}`, '_blank');
+                  }
+                }}>
+                  <input 
+                    type="email" 
+                    name="email"
+                    placeholder="Enter your email"
+                    className="flex-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                    required
+                  />
+                  <Button type="submit" className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap">
+                    Subscribe
+                  </Button>
+                </form>
             </div>
           </div>
           

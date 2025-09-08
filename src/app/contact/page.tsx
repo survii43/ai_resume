@@ -47,10 +47,15 @@ export default function ContactPage() {
     setIsSubmitting(true)
 
     try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 2000))
+      // Create mailto link with form data
+      const mailtoLink = `mailto:sourav.offic@gmail.com?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\nType: ${formData.type}\n\nMessage:\n${formData.message}`
+      )}`
       
-      showSuccess('Message sent successfully! We\'ll get back to you within 24 hours.')
+      // Open email client
+      window.open(mailtoLink, '_blank')
+      
+      showSuccess('Email client opened! Please send your message.')
       setFormData({
         name: '',
         email: '',
@@ -59,7 +64,7 @@ export default function ContactPage() {
         type: 'general'
       })
     } catch (error) {
-      showError('Failed to send message. Please try again.')
+      showError('Failed to open email client. Please try again.')
     } finally {
       setIsSubmitting(false)
     }

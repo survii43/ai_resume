@@ -27,7 +27,11 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       id,
       onClose: removeToast,
     }
-    setToasts(prev => [...prev, newToast])
+    setToasts(prev => {
+      // Limit to 5 toasts maximum
+      const updatedToasts = [...prev, newToast]
+      return updatedToasts.slice(-5)
+    })
   }, [removeToast])
 
   const showSuccess = useCallback((title: string, description?: string) => {
