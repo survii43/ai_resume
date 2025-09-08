@@ -5,6 +5,7 @@ import { useResume } from '@/contexts/ResumeContext'
 import { useAI } from '@/contexts/AIContext'
 import { useToast } from '@/contexts/ToastContext'
 import { Button } from '@/components/ui/Button'
+import { IconButton } from '@/components/ui/IconButton'
 import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
@@ -201,15 +202,16 @@ export function PersonalInfoForm() {
             <label className="text-sm font-medium text-gray-700">
               Professional Summary
             </label>
-            <Button
+            <IconButton
+              icon={Sparkles}
               variant="outline"
               size="sm"
               onClick={handleGenerateSummary}
               loading={aiState.isLoading}
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              AI Generate
-            </Button>
+              tooltip="Generate professional summary with AI"
+              showLabel={true}
+              label="AI Generate"
+            />
           </div>
           <Textarea
             value={formData.summary}
