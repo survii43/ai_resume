@@ -379,20 +379,25 @@ export default function HomePage() {
                 Join 50,000+ Success Stories
               </div>
               
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={{ color: 'white' }}>
                 Ready to Build Your Perfect Resume?
               </h2>
-              <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-xl text-white mb-8 max-w-2xl mx-auto lg:mx-0" style={{ color: 'white' }}>
                 Join thousands of professionals who have already created winning resumes with ResumeAI. 
                 Start your journey to career success today.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
                 <Link href="/builder">
-                  <Button size="lg" className="w-full sm:w-auto bg-white text-blue-600 hover:bg-gray-100 hover:scale-105 transition-all shadow-lg">
-                    <Sparkles className="w-5 h-5 mr-2" />
+                  <Button 
+                    size="lg" 
+                    variant="secondary"
+                    className="w-full sm:w-auto bg-white hover:bg-gray-100 hover:scale-105 transition-all shadow-lg !text-black" 
+                    style={{ color: 'black !important' }}
+                  >
+                    <Sparkles className="w-5 h-5 mr-2" style={{ color: 'black' }} />
                     Start Building Now
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRight className="w-5 h-5 ml-2" style={{ color: 'black' }} />
                   </Button>
                 </Link>
                 <Button variant="outline" size="lg" className="w-full sm:w-auto border-white text-white hover:bg-white hover:text-blue-600 hover:scale-105 transition-all">
