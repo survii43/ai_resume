@@ -26,9 +26,11 @@ export function ExperienceForm() {
     order: state.resume.experiences.length,
   })
 
+
   const handleInputChange = (field: keyof Experience, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
+
 
   const handleSave = () => {
     if (editingId) {

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { Textarea } from '@/components/ui/Textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Project } from '@/types'
-import { Trash2 } from 'lucide-react'
+import { Trash2, Sparkles, Copy, Check, X } from 'lucide-react'
 import { generateId } from '@/lib/utils'
 
 export function ProjectsForm() {

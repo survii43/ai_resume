@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useResume } from '@/contexts/ResumeContext'
 import { useToast } from '@/contexts/ToastContext'
+import { TemplateSettings } from '@/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { IconButton } from '@/components/ui/IconButton'
@@ -29,33 +30,27 @@ import {
 } from 'lucide-react'
 import { TemplatePreview } from './TemplatePreview'
 
-interface TemplateSettings {
-  template: string
-  colorScheme: string
-  fontSize: string
-  fontFamily: string
-  layout: string
-  showDividers: boolean
-  showIcons: boolean
-  compactMode: boolean
+interface LocalTemplateSettings extends TemplateSettings {
   title: string
   isPublic: boolean
 }
 
 export function TemplateConfig() {
-  const { state, setTemplate, updatePersonalInfo } = useResume()
+  const { state, setTemplate, updateTemplateSettings, updatePersonalInfo } = useResume()
   const { showSuccess, showError } = useToast()
   const { resume } = state
   
-  const [settings, setSettings] = useState<TemplateSettings>({
+  const [settings, setSettings] = useState<LocalTemplateSettings>({
     template: resume.template || 'classic',
-    colorScheme: 'blue',
-    fontSize: 'base',
-    fontFamily: 'sans',
-    layout: 'single',
-    showDividers: true,
-    showIcons: true,
-    compactMode: false,
+    colorScheme: resume.templateSettings?.colorScheme || 'blue',
+    fontSize: resume.templateSettings?.fontSize || 'base',
+    fontFamily: resume.templateSettings?.fontFamily || 'sans',
+    layout: resume.templateSettings?.layout || 'single',
+    showDividers: resume.templateSettings?.showDividers ?? true,
+    showIcons: resume.templateSettings?.showIcons ?? true,
+    compactMode: resume.templateSettings?.compactMode ?? false,
+    convertToBullets: resume.templateSettings?.convertToBullets ?? true,
+    bulletStyle: resume.templateSettings?.bulletStyle || 'dash',
     title: resume.title || 'My Professional Resume',
     isPublic: resume.isPublic || false
   })
@@ -70,6 +65,15 @@ export function TemplateConfig() {
     setSettings(prev => ({
       ...prev,
       template: resume.template || 'classic',
+      colorScheme: resume.templateSettings?.colorScheme || 'blue',
+      fontSize: resume.templateSettings?.fontSize || 'base',
+      fontFamily: resume.templateSettings?.fontFamily || 'sans',
+      layout: resume.templateSettings?.layout || 'single',
+      showDividers: resume.templateSettings?.showDividers ?? true,
+      showIcons: resume.templateSettings?.showIcons ?? true,
+      compactMode: resume.templateSettings?.compactMode ?? false,
+      convertToBullets: resume.templateSettings?.convertToBullets ?? true,
+      bulletStyle: resume.templateSettings?.bulletStyle || 'dash',
       title: resume.title || 'My Professional Resume',
       isPublic: resume.isPublic || false
     }))
@@ -78,6 +82,15 @@ export function TemplateConfig() {
   // Track changes
   useEffect(() => {
     const hasChanges = settings.template !== (resume.template || 'classic') ||
+                      settings.colorScheme !== (resume.templateSettings?.colorScheme || 'blue') ||
+                      settings.fontSize !== (resume.templateSettings?.fontSize || 'base') ||
+                      settings.fontFamily !== (resume.templateSettings?.fontFamily || 'sans') ||
+                      settings.layout !== (resume.templateSettings?.layout || 'single') ||
+                      settings.showDividers !== (resume.templateSettings?.showDividers ?? true) ||
+                      settings.showIcons !== (resume.templateSettings?.showIcons ?? true) ||
+                      settings.compactMode !== (resume.templateSettings?.compactMode ?? false) ||
+                      settings.convertToBullets !== (resume.templateSettings?.convertToBullets ?? true) ||
+                      settings.bulletStyle !== (resume.templateSettings?.bulletStyle || 'dash') ||
                       settings.title !== (resume.title || 'My Professional Resume') ||
                       settings.isPublic !== (resume.isPublic || false)
     setHasChanges(hasChanges)
@@ -204,15 +217,32 @@ export function TemplateConfig() {
     },
   ]
 
-  const updateSetting = (key: keyof TemplateSettings, value: any) => {
+  const updateSetting = (key: keyof LocalTemplateSettings, value: any) => {
     setSettings(prev => ({ ...prev, [key]: value }))
   }
 
   const saveSettings = () => {
     try {
       // Update resume with new settings
-      setTemplate(settings.template)
-      // You can add more update functions here for other settings
+      const templateSettings = {
+        template: settings.template,
+        colorScheme: settings.colorScheme,
+        fontSize: settings.fontSize,
+        fontFamily: settings.fontFamily,
+        layout: settings.layout,
+        showDividers: settings.showDividers,
+        showIcons: settings.showIcons,
+        compactMode: settings.compactMode,
+        convertToBullets: settings.convertToBullets,
+        bulletStyle: settings.bulletStyle,
+      }
+      updateTemplateSettings(templateSettings)
+      
+      // Update title and public status
+      if (settings.title !== resume.title) {
+        updatePersonalInfo({ ...resume.personalInfo!, firstName: settings.title })
+      }
+      
       setHasChanges(false)
       showSuccess('Template settings saved successfully!')
     } catch (error) {
@@ -230,6 +260,8 @@ export function TemplateConfig() {
       showDividers: true,
       showIcons: true,
       compactMode: false,
+      convertToBullets: true,
+      bulletStyle: 'dash',
       title: 'My Professional Resume',
       isPublic: false
     })
@@ -590,6 +622,57 @@ export function TemplateConfig() {
                     onChange={(e) => updateSetting('compactMode', e.target.checked)}
                   />
                 </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-sm font-medium text-gray-700">Experience Formatting</h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">
+                      Convert to Bullet Points
+                    </label>
+                    <p className="text-xs text-gray-500">Convert experience descriptions to bullet points</p>
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    checked={settings.convertToBullets}
+                    onChange={(e) => updateSetting('convertToBullets', e.target.checked)}
+                  />
+                </div>
+                
+                {settings.convertToBullets && (
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <label className="text-sm font-medium text-gray-700 mb-3 block">
+                      Bullet Point Style
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { value: 'dash', label: 'Dash (—)', preview: '—' },
+                        { value: 'dot', label: 'Dot (•)', preview: '•' },
+                        { value: 'arrow', label: 'Arrow (→)', preview: '→' },
+                        { value: 'number', label: 'Number (1.)', preview: '1.' }
+                      ].map((style) => (
+                        <button
+                          key={style.value}
+                          onClick={() => updateSetting('bulletStyle', style.value)}
+                          className={`p-2 rounded-lg border-2 transition-all text-left ${
+                            settings.bulletStyle === style.value
+                              ? 'border-orange-500 bg-orange-50'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="flex items-center">
+                            <span className="text-lg mr-2">{style.preview}</span>
+                            <span className="text-xs text-gray-600">{style.label}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>

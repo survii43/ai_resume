@@ -187,14 +187,34 @@ export default function ResumeBuilder() {
                 {
                   icon: Share2,
                   label: 'Share',
-                  onClick: () => console.log('Share clicked'),
+                  onClick: () => {
+                    // Navigate to export tab in step 6
+                    setStep(6)
+                    // Trigger export tab after a short delay to ensure component is mounted
+                    setTimeout(() => {
+                      const exportTab = document.querySelector('[data-tab="export"]') as HTMLElement
+                      if (exportTab) {
+                        exportTab.click()
+                      }
+                    }, 100)
+                  },
                   variant: 'outline',
                   tooltip: 'Share your resume'
                 },
                 {
                   icon: Download,
                   label: 'Export',
-                  onClick: () => console.log('Export clicked'),
+                  onClick: () => {
+                    // Navigate to export tab in step 6
+                    setStep(6)
+                    // Trigger export tab after a short delay to ensure component is mounted
+                    setTimeout(() => {
+                      const exportTab = document.querySelector('[data-tab="export"]') as HTMLElement
+                      if (exportTab) {
+                        exportTab.click()
+                      }
+                    }, 100)
+                  },
                   variant: 'primary',
                   tooltip: 'Export your resume'
                 }

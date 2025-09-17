@@ -5,9 +5,78 @@ import { useResume } from '@/contexts/ResumeContext'
 import { formatDate } from '@/lib/utils'
 import { Star } from 'lucide-react'
 
+const convertToBulletPoints = (description: string, bulletStyle: string) => {
+  if (!description) return []
+  
+  // Split by common separators and clean up
+  let sentences = description
+    .split(/[.!?]+/)
+    .map(s => s.trim())
+    .filter(s => s.length > 0)
+    .map(s => s.replace(/^[-—•→\d+\.\s]+/, '').trim()) // Remove existing bullets
+    .filter(s => s.length > 15) // Filter out very short fragments
+  
+  // If no sentences found, try splitting by other patterns
+  if (sentences.length === 0) {
+    sentences = description
+      .split(/[,;]+/)
+      .map(s => s.trim())
+      .filter(s => s.length > 15)
+  }
+  
+  // If still no sentences, create meaningful bullets from the description
+  if (sentences.length === 0) {
+    const words = description.split(' ')
+    if (words.length > 10) {
+      const midPoint = Math.floor(words.length / 2)
+      sentences = [
+        words.slice(0, midPoint).join(' '),
+        words.slice(midPoint).join(' ')
+      ]
+    } else {
+      sentences = [description]
+    }
+  }
+  
+  return sentences.map((sentence, index) => {
+    let bullet = ''
+    switch (bulletStyle) {
+      case 'dash':
+        bullet = '—'
+        break
+      case 'dot':
+        bullet = '•'
+        break
+      case 'arrow':
+        bullet = '→'
+        break
+      case 'number':
+        bullet = `${index + 1}.`
+        break
+      default:
+        bullet = '—'
+    }
+    return `${bullet} ${sentence}`
+  })
+}
+
 export function ResumePreview() {
   const { state } = useResume()
   const { resume } = state
+  
+  // Get template settings with defaults
+  const templateSettings = resume.templateSettings || {
+    template: 'classic',
+    colorScheme: 'blue',
+    fontSize: 'base',
+    fontFamily: 'sans',
+    layout: 'single',
+    showDividers: true,
+    showIcons: true,
+    compactMode: false,
+    convertToBullets: true,
+    bulletStyle: 'dash',
+  }
 
   const renderStars = (level: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -33,6 +102,7 @@ export function ResumePreview() {
     return categories
   }
 
+
   // Show placeholder if no data
   if (!resume.personalInfo?.firstName && !resume.personalInfo?.lastName) {
     return (
@@ -50,20 +120,57 @@ export function ResumePreview() {
     )
   }
 
-  if (resume.template === 'modern') {
-    return <ModernTemplate resume={resume} renderStars={renderStars} getSkillsByCategory={getSkillsByCategory} />
+  if (templateSettings.template === 'modern') {
+    return <ModernTemplate resume={resume} templateSettings={templateSettings} renderStars={renderStars} getSkillsByCategory={getSkillsByCategory} />
   }
 
-  if (resume.template === 'creative') {
-    return <CreativeTemplate resume={resume} renderStars={renderStars} getSkillsByCategory={getSkillsByCategory} />
+  if (templateSettings.template === 'creative') {
+    return <CreativeTemplate resume={resume} templateSettings={templateSettings} renderStars={renderStars} getSkillsByCategory={getSkillsByCategory} />
   }
 
-  return <ClassicTemplate resume={resume} renderStars={renderStars} getSkillsByCategory={getSkillsByCategory} />
+  return <ClassicTemplate resume={resume} templateSettings={templateSettings} renderStars={renderStars} getSkillsByCategory={getSkillsByCategory} />
 }
 
-function ClassicTemplate({ resume, renderStars, getSkillsByCategory }: any) {
+function ClassicTemplate({ resume, templateSettings, renderStars, getSkillsByCategory }: any) {
+  const getColorClasses = (colorScheme: string) => {
+    const colors = {
+      blue: { primary: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', accent: 'bg-blue-100' },
+      green: { primary: 'text-green-600', bg: 'bg-green-50', border: 'border-green-200', accent: 'bg-green-100' },
+      purple: { primary: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', accent: 'bg-purple-100' },
+      red: { primary: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', accent: 'bg-red-100' },
+      indigo: { primary: 'text-indigo-600', bg: 'bg-indigo-50', border: 'border-indigo-200', accent: 'bg-indigo-100' },
+      teal: { primary: 'text-teal-600', bg: 'bg-teal-50', border: 'border-teal-200', accent: 'bg-teal-100' },
+      orange: { primary: 'text-orange-600', bg: 'bg-orange-50', border: 'border-orange-200', accent: 'bg-orange-100' },
+      gray: { primary: 'text-gray-600', bg: 'bg-gray-50', border: 'border-gray-200', accent: 'bg-gray-100' },
+    }
+    return colors[colorScheme as keyof typeof colors] || colors.blue
+  }
+
+  const getFontSizeClass = (fontSize: string) => {
+    const sizes = {
+      sm: 'text-sm',
+      base: 'text-base',
+      lg: 'text-lg',
+      xl: 'text-xl',
+    }
+    return sizes[fontSize as keyof typeof sizes] || 'text-base'
+  }
+
+  const getFontFamilyClass = (fontFamily: string) => {
+    const families = {
+      sans: 'font-sans',
+      serif: 'font-serif',
+      mono: 'font-mono',
+    }
+    return families[fontFamily as keyof typeof families] || 'font-sans'
+  }
+
+  const colors = getColorClasses(templateSettings.colorScheme)
+  const fontSizeClass = getFontSizeClass(templateSettings.fontSize)
+  const fontFamilyClass = getFontFamilyClass(templateSettings.fontFamily)
+
   return (
-    <div className="bg-white p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto shadow-lg text-gray-900">
+    <div className={`bg-white p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto shadow-lg text-gray-900 ${fontFamilyClass} ${fontSizeClass} ${templateSettings.compactMode ? 'space-y-4' : 'space-y-6'}`}>
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -83,8 +190,8 @@ function ClassicTemplate({ resume, renderStars, getSkillsByCategory }: any) {
 
       {/* Summary */}
       {resume.personalInfo?.summary && (
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-3 border-b-2 border-gray-300">
+        <div className={templateSettings.compactMode ? 'mb-4' : 'mb-8'}>
+          <h2 className={`text-xl font-semibold ${colors.primary} mb-3 ${templateSettings.showDividers ? `border-b-2 ${colors.border}` : ''}`}>
             Professional Summary
           </h2>
           <p className="text-gray-700 leading-relaxed">{resume.personalInfo.summary}</p>
@@ -93,8 +200,8 @@ function ClassicTemplate({ resume, renderStars, getSkillsByCategory }: any) {
 
       {/* Experience */}
       {resume.experiences && resume.experiences.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-3 border-b-2 border-gray-300">
+        <div className={templateSettings.compactMode ? 'mb-4' : 'mb-8'}>
+          <h2 className={`text-xl font-semibold ${colors.primary} mb-3 ${templateSettings.showDividers ? `border-b-2 ${colors.border}` : ''}`}>
             Work Experience
           </h2>
           {resume.experiences?.map((exp: any) => (
@@ -102,7 +209,7 @@ function ClassicTemplate({ resume, renderStars, getSkillsByCategory }: any) {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">{exp.position}</h3>
-                  <p className="text-blue-600 font-medium">{exp.company}</p>
+                  <p className={`${colors.primary} font-medium`}>{exp.company}</p>
                   {exp.location && <p className="text-gray-600 text-sm">{exp.location}</p>}
                 </div>
                 <div className="text-right text-gray-600">
@@ -110,7 +217,25 @@ function ClassicTemplate({ resume, renderStars, getSkillsByCategory }: any) {
                 </div>
               </div>
               {exp.description && (
-                <p className="text-gray-700 mt-2">{exp.description}</p>
+                <div className="text-gray-700 mt-2">
+                  {templateSettings.convertToBullets ? (
+                    <ul className="list-none space-y-1">
+                      {convertToBulletPoints(exp.description, templateSettings.bulletStyle).map((bullet, index) => (
+                        <li key={index} className="flex items-start">
+                          <span className="mr-2 text-gray-600">
+                            {templateSettings.bulletStyle === 'dash' ? '—' :
+                             templateSettings.bulletStyle === 'dot' ? '•' :
+                             templateSettings.bulletStyle === 'arrow' ? '→' :
+                             templateSettings.bulletStyle === 'number' ? `${index + 1}.` : '—'}
+                          </span>
+                          <span>{bullet.replace(/^[—•→\d+\.\s]+/, '')}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{exp.description}</p>
+                  )}
+                </div>
               )}
             </div>
           ))}
@@ -203,7 +328,7 @@ function ClassicTemplate({ resume, renderStars, getSkillsByCategory }: any) {
   )
 }
 
-function ModernTemplate({ resume, renderStars, getSkillsByCategory }: any) {
+function ModernTemplate({ resume, templateSettings, renderStars, getSkillsByCategory }: any) {
   return (
     <div className="bg-white max-w-4xl mx-auto shadow-lg">
       {/* Header with colored background */}
@@ -255,7 +380,25 @@ function ModernTemplate({ resume, renderStars, getSkillsByCategory }: any) {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-gray-700 mt-2">{exp.description}</p>
+                  <div className="text-gray-700 mt-2">
+                    {templateSettings.convertToBullets ? (
+                      <ul className="list-none space-y-1">
+                        {convertToBulletPoints(exp.description, templateSettings.bulletStyle).map((bullet, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="mr-2 text-gray-600">
+                              {templateSettings.bulletStyle === 'dash' ? '—' :
+                               templateSettings.bulletStyle === 'dot' ? '•' :
+                               templateSettings.bulletStyle === 'arrow' ? '→' :
+                               templateSettings.bulletStyle === 'number' ? `${index + 1}.` : '—'}
+                            </span>
+                            <span>{bullet.replace(/^[—•→\d+\.\s-]+/, '')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>{exp.description}</p>
+                    )}
+                  </div>
                 )}
               </div>
             ))}
@@ -352,7 +495,7 @@ function ModernTemplate({ resume, renderStars, getSkillsByCategory }: any) {
   )
 }
 
-function CreativeTemplate({ resume, renderStars, getSkillsByCategory }: any) {
+function CreativeTemplate({ resume, templateSettings, renderStars, getSkillsByCategory }: any) {
   return (
     <div className="bg-white max-w-4xl mx-auto shadow-lg">
       {/* Creative Header */}
@@ -408,7 +551,25 @@ function CreativeTemplate({ resume, renderStars, getSkillsByCategory }: any) {
                   </div>
                 </div>
                 {exp.description && (
-                  <p className="text-gray-700 mt-2">{exp.description}</p>
+                  <div className="text-gray-700 mt-2">
+                    {templateSettings.convertToBullets ? (
+                      <ul className="list-none space-y-1">
+                        {convertToBulletPoints(exp.description, templateSettings.bulletStyle).map((bullet, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="mr-2 text-gray-600">
+                              {templateSettings.bulletStyle === 'dash' ? '—' :
+                               templateSettings.bulletStyle === 'dot' ? '•' :
+                               templateSettings.bulletStyle === 'arrow' ? '→' :
+                               templateSettings.bulletStyle === 'number' ? `${index + 1}.` : '—'}
+                            </span>
+                            <span>{bullet.replace(/^[—•→\d+\.\s-]+/, '')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>{exp.description}</p>
+                    )}
+                  </div>
                 )}
               </div>
             ))}

@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Skill } from '@/types'
-import { Trash2, Star } from 'lucide-react'
+import { Trash2, Star, Edit } from 'lucide-react'
 import { generateId } from '@/lib/utils'
+import { IconButton } from '../ui/IconButton'
 
 export function SkillsForm() {
   const { state, addSkill, updateSkill, deleteSkill } = useResume()
@@ -150,30 +151,18 @@ export function SkillsForm() {
                 <h4 className="font-medium text-gray-700 capitalize">
                   {skillCategories.find(c => c.value === category)?.label}
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2">
                   {skills.map((skill) => (
-                    <div key={skill.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center space-x-3">
-                        <span className="font-medium">{skill.name}</span>
-                        <div className="flex items-center space-x-1">
+                    <div key={skill.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 border rounded-lg gap-2">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 min-w-0 flex-1">
+                        <span className="font-medium text-sm sm:text-base truncate">{skill.name}</span>
+                        <div className="flex items-center space-x-1 flex-shrink-0">
                           {renderStars(skill.level)}
                         </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleEdit(skill)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => handleDelete(skill.id!)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="flex space-x-2 flex-shrink-0">
+                        <IconButton variant="outline" size="sm" icon={Edit} onClick={() => handleEdit(skill)}/>
+                        <IconButton variant="destructive" size="sm" icon={Trash2} onClick={() => handleDelete(skill.id!)}/>
                       </div>
                     </div>
                   ))}

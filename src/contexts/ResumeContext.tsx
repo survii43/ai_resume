@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useReducer, ReactNode } from 'react'
-import { Resume, PersonalInfo, Experience, Education, Skill, Project } from '@/types'
+import { Resume, PersonalInfo, Experience, Education, Skill, Project, TemplateSettings } from '@/types'
 
 interface ResumeState {
   resume: Resume
@@ -30,6 +30,7 @@ type ResumeAction =
   | { type: 'DELETE_PROJECT'; payload: string }
   | { type: 'REORDER_PROJECTS'; payload: Project[] }
   | { type: 'SET_TEMPLATE'; payload: string }
+  | { type: 'UPDATE_TEMPLATE_SETTINGS'; payload: TemplateSettings }
   | { type: 'SET_STEP'; payload: number }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
@@ -38,6 +39,18 @@ const initialState: ResumeState = {
   resume: {
     title: 'My Resume',
     template: 'classic',
+    templateSettings: {
+      template: 'classic',
+      colorScheme: 'blue',
+      fontSize: 'base',
+      fontFamily: 'sans',
+      layout: 'single',
+      showDividers: true,
+      showIcons: true,
+      compactMode: false,
+      convertToBullets: true,
+      bulletStyle: 'dash',
+    },
     isPublic: false,
     personalInfo: {
       firstName: '',
@@ -214,7 +227,24 @@ function resumeReducer(state: ResumeState, action: ResumeAction): ResumeState {
     case 'SET_TEMPLATE':
       return {
         ...state,
-        resume: { ...state.resume, template: action.payload }
+        resume: { 
+          ...state.resume, 
+          template: action.payload,
+          templateSettings: {
+            ...state.resume.templateSettings!,
+            template: action.payload
+          }
+        }
+      }
+    
+    case 'UPDATE_TEMPLATE_SETTINGS':
+      return {
+        ...state,
+        resume: { 
+          ...state.resume, 
+          templateSettings: action.payload,
+          template: action.payload.template
+        }
       }
     
     case 'SET_STEP':
@@ -252,6 +282,7 @@ interface ResumeContextType {
   deleteProject: (id: string) => void
   reorderProjects: (projects: Project[]) => void
   setTemplate: (template: string) => void
+  updateTemplateSettings: (settings: TemplateSettings) => void
   setStep: (step: number) => void
 }
 
@@ -332,6 +363,10 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_TEMPLATE', payload: template })
   }
 
+  const updateTemplateSettings = (settings: TemplateSettings) => {
+    dispatch({ type: 'UPDATE_TEMPLATE_SETTINGS', payload: settings })
+  }
+
   const setStep = (step: number) => {
     dispatch({ type: 'SET_STEP', payload: step })
   }
@@ -357,6 +392,7 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
     deleteProject,
     reorderProjects,
     setTemplate,
+    updateTemplateSettings,
     setStep,
   }
 

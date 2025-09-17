@@ -404,6 +404,7 @@ export function Step6Review({ resumeRef, onPreviousStep }: Step6ReviewProps) {
             activeTab === 'export' ? 'ring-2 ring-orange-500 bg-orange-50' : ''
           }`} 
           onClick={() => handleTabChange('export')}
+          data-tab="export"
         >
           <CardContent className="p-6 text-center">
             <div className="relative">

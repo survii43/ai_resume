@@ -56,10 +56,24 @@ export interface Project {
   order: number
 }
 
+export interface TemplateSettings {
+  template: string
+  colorScheme: string
+  fontSize: string
+  fontFamily: string
+  layout: string
+  showDividers: boolean
+  showIcons: boolean
+  compactMode: boolean
+  convertToBullets: boolean
+  bulletStyle: 'dash' | 'dot' | 'arrow' | 'number'
+}
+
 export interface Resume {
   id?: string
   title: string
   template: string
+  templateSettings?: TemplateSettings
   isPublic: boolean
   shareToken?: string
   personalInfo?: PersonalInfo
